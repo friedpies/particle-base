@@ -15,8 +15,8 @@ RCSwitch receivePin = RCSwitch();
 
 void setup() {
   Serial.begin(9600);
-  Particle.function("switch", switchToggle);
-  Particle.function("all", allLights);
+  Particle.function("switchToggle", switchToggle);
+  Particle.function("allLights", allLights);
   Particle.variable("numSwitches", &numSwitches, STRING);
 
   pinMode(RECEIVEPIN, INPUT_PULLDOWN);
