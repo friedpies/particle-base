@@ -3,11 +3,11 @@
 #include "pinDefines.h"
 
 String numSwitches = "5";
-char *onCodes[] = {"F0F0FFFF0101", "F0F0FFFF1001", "F0F0FFF10001", "F0F0FF1F0001", "F0F0F1FF0001"};
-char *offCodes[] = {"F0F0FFFF0110", "F0F0FFFF1010", "F0F0FFF10010", "F0F0FF1F0010", "F0F0F1FF0010"};
 
-// char *onCodes[] = {"010001000101010100110011", "010001000101010111000011", "010001000101011100000011", "010001000101110100000011", "010001000111010100000011"};
-// char *offCodes[] = {"010001000101010100111100", "010001000101010111001100", "010001000101011100001100", "010001000101110100001100", "010001000111010100001100"};
+char *onCodes[] = {"010001000101010100110011", "010001000101010111000011", "010001000101011100000011", "010001000101110100000011", "010001000111010100000011"};
+char *offCodes[] = {"010001000101010100111100", "010001000101010111001100", "010001000101011100001100", "010001000101110100001100", "010001000111010100001100"};
+
+char *secturiyCodes[] = {"111000010100110000000100", "111000010100110000000010"}; // arm, disarm
 int receivedValue = 0;
 
 RCSwitch transmitPin = RCSwitch();
@@ -18,6 +18,7 @@ void setup() {
   Particle.function("switchToggle", switchToggle);
   Particle.function("allLights", allLights);
   Particle.variable("numSwitches", &numSwitches, STRING);
+  Particle.function("security", security);
 
   pinMode(RECEIVEPIN, INPUT_PULLDOWN);
   pinMode(LEDPIN, OUTPUT);
@@ -50,13 +51,13 @@ int switchToggle(String command) {
   if (statusInt == 1) {
     returnString = switchNumber + switchStatus;
     returnInt = returnString.toInt();
-    transmitPin.sendTriState(onCodes[switchInt - 1]);
+    transmitPin.send(onCodes[switchInt - 1]);
     return returnInt;
   }
   else if (statusInt == 0) {
     returnString = switchNumber + switchStatus;
     returnInt = returnString.toInt();
-    transmitPin.sendTriState(offCodes[switchInt - 1]);
+    transmitPin.send(offCodes[switchInt - 1]);
     return returnInt;
   }
   else {
@@ -67,14 +68,14 @@ int switchToggle(String command) {
 int allLights(String command) {
   if(command == "1") {
     for(int i = 0; i < numSwitches.toInt(); i++) {
-      transmitPin.sendTriState(onCodes[i]);
+      transmitPin.send(onCodes[i]);
       delay(50);
     }
   }
 
   if(command == "0") {
     for(int i = 0; i < numSwitches.toInt(); i++) {
-      transmitPin.sendTriState(offCodes[i]);
+      transmitPin.send(offCodes[i]);
       delay(50);
     }
   }
