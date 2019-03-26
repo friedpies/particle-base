@@ -2,12 +2,16 @@
 #include "RCSwitch.h"
 #include "pinDefines.h"
 
-String numSwitches = "5";
+String numSwitches = "10";
 
-char *onCodes[] = {"010001000101010100110011", "010001000101010111000011", "010001000101011100000011", "010001000101110100000011", "010001000111010100000011"};
-char *offCodes[] = {"010001000101010100111100", "010001000101010111001100", "010001000101011100001100", "010001000101110100001100", "010001000111010100001100"};
+char *onCodes[] = {"010001000101010100110011", "010001000101010111000011", "010001000101011100000011", "010001000101110100000011", "010001000111010100000011", "000100010001010100110011", "000100010001010111000011", "000100010001011100000011", "000100010001110100000011", "000100010011010100000011"};
+char *offCodes[] = {"010001000101010100111100", "010001000101010111001100", "010001000101011100001100", "010001000101110100001100", "010001000111010100001100", "000100010001010100111100", "000100010001010111001100", "000100010001011100001100", "000100010001110100001100", "000100010011010100001100"};
 
-char *secturiyCodes[] = {"111000010100110000000100", "111000010100110000000010"}; // arm, disarm
+// char *secturiyCodes[] = {"111000010100110000000100", "111000010100110000000010"}; // arm, disarm
+
+int numAlarmDevices = 2;
+// int alarmTransmittersValues[] = {13305594, 15584522};
+// char *alarmTransmitterNames[] = {"FRONT PATIO", "INSIDE MOTION"};
 int receivedValue = 0;
 
 RCSwitch transmitPin = RCSwitch();
@@ -16,9 +20,10 @@ RCSwitch receivePin = RCSwitch();
 void setup() {
   Serial.begin(9600);
   Particle.function("switchToggle", switchToggle);
-  Particle.function("allLights", allLights);
+  Particle.function("livingRoom", livingRoom);
+  Particle.function("bedRoom", bedRoom);
   Particle.variable("numSwitches", &numSwitches, STRING);
-  Particle.function("security", security);
+  // Particle.function("security", security);
 
   pinMode(RECEIVEPIN, INPUT_PULLDOWN);
   pinMode(LEDPIN, OUTPUT);
@@ -34,6 +39,12 @@ void loop() {
   digitalWrite(LEDPIN, inputPinState);
 
   if (receivePin.available()) {
+    // receivedValue = receivePin.getReceivedValue();
+    // for (int i = 0; i < numAlarmDevices; i++) {
+    //   if (receivedValue == alarmTransmittersValues[i]) {
+    //     Particle.publish("ALARM", alarmTransmitterNames[i]);
+    //   }
+    // }
     output(receivePin.getReceivedValue(), receivePin.getReceivedBitlength(), receivePin.getReceivedDelay(), receivePin.getReceivedRawdata(), receivePin.getReceivedProtocol());
     receivePin.resetAvailable();
   }
@@ -51,13 +62,19 @@ int switchToggle(String command) {
   if (statusInt == 1) {
     returnString = switchNumber + switchStatus;
     returnInt = returnString.toInt();
-    transmitPin.send(onCodes[switchInt - 1]);
+    for (int i = 0; i < 3; i++) {
+      transmitPin.send(onCodes[switchInt - 1]);
+      delay(200);
+    }
     return returnInt;
   }
   else if (statusInt == 0) {
     returnString = switchNumber + switchStatus;
     returnInt = returnString.toInt();
-    transmitPin.send(offCodes[switchInt - 1]);
+    for (int i = 0; i < 3; i++){
+      transmitPin.send(offCodes[switchInt - 1]);
+      delay(200);
+    }
     return returnInt;
   }
   else {
@@ -65,18 +82,43 @@ int switchToggle(String command) {
   }
 }
 
-int allLights(String command) {
+int livingRoom(String command) {
   if(command == "1") {
-    for(int i = 0; i < numSwitches.toInt(); i++) {
-      transmitPin.send(onCodes[i]);
-      delay(50);
+    for(int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        transmitPin.send(onCodes[i]);
+        delay(50);
+      }
     }
   }
 
   if(command == "0") {
-    for(int i = 0; i < numSwitches.toInt(); i++) {
-      transmitPin.send(offCodes[i]);
-      delay(50);
+    for(int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++){
+        transmitPin.send(offCodes[i]);
+        delay(50);
+      }
+    }
+  }
+  return 1;
+}
+
+int bedRoom(String command) {
+  if(command == "1") {
+    for(int i = 5; i < numSwitches.toInt(); i++) {
+      for (int j = 0; j < 3; j++) {
+        transmitPin.send(onCodes[i]);
+        delay(50);
+      }
+    }
+  }
+
+  if(command == "0") {
+    for(int i = 5part; i < numSwitches.toInt(); i++) {
+      for (int j = 0; j < 3; j++){
+        transmitPin.send(offCodes[i]);
+        delay(50);
+      }
     }
   }
   return 1;
