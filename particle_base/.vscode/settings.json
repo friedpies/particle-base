@@ -1,0 +1,5 @@
+{
+  "cortex-debug.openocdPath": "${command:particle.getDebuggerOpenocdPath}",
+  "C_Cpp.default.configurationProvider": "particle.particle-vscode-core",
+  "particle.targetDevice": "1f0039001647343339383037"
+}

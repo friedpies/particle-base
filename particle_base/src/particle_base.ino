@@ -84,7 +84,7 @@ int switchToggle(String command) {
 
 int livingRoom(String command) {
   if(command == "1") {
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 4; i++) {
       for (int j = 0; j < 3; j++) {
         transmitPin.send(onCodes[i]);
         delay(50);
@@ -93,7 +93,7 @@ int livingRoom(String command) {
   }
 
   if(command == "0") {
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 4; i++) {
       for (int j = 0; j < 3; j++){
         transmitPin.send(offCodes[i]);
         delay(50);
@@ -114,7 +114,7 @@ int bedRoom(String command) {
   }
 
   if(command == "0") {
-    for(int i = 5part; i < numSwitches.toInt(); i++) {
+    for(int i = 5; i < numSwitches.toInt(); i++) {
       for (int j = 0; j < 3; j++){
         transmitPin.send(offCodes[i]);
         delay(50);
