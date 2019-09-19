@@ -7,7 +7,7 @@ String numSwitches = "10";
 char *onCodes[] = {"010001000101010100110011", "010001000101010111000011", "010001000101011100000011", "010001000101110100000011", "010001000111010100000011", "000100010001010100110011", "000100010001010111000011", "000100010001011100000011", "000100010001110100000011", "000100010011010100000011"};
 char *offCodes[] = {"010001000101010100111100", "010001000101010111001100", "010001000101011100001100", "010001000101110100001100", "010001000111010100001100", "000100010001010100111100", "000100010001010111001100", "000100010001011100001100", "000100010001110100001100", "000100010011010100001100"};
 
-// char *secturiyCodes[] = {"111000010100110000000100", "111000010100110000000010"}; // arm, disarm
+char *securityCodes[] = {"111000010100110000000100", "111000010100110000000010"}; // arm, disarm
 
 int numAlarmDevices = 2;
 // int alarmTransmittersValues[] = {13305594, 15584522};
@@ -21,6 +21,7 @@ void setup() {
   Serial.begin(9600);
   Particle.function("switchToggle", switchToggle);
   Particle.function("livingRoom", livingRoom);
+  Particle.function("securitySystem", securitySystem);
   Particle.function("bedRoom", bedRoom);
   Particle.variable("numSwitches", &numSwitches, STRING);
   // Particle.function("security", security);
@@ -99,6 +100,17 @@ int livingRoom(String command) {
         delay(50);
       }
     }
+  }
+  return 1;
+}
+
+int securitySystem(String command) {
+  if (command == "1") {
+        transmitPin.send(securityCodes[0]);
+        return 1;
+  } else if (command == "0") {
+        transmitPin.send(securityCodes[1]);
+        return 0;
   }
   return 1;
 }
